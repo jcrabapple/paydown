@@ -57,6 +57,20 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+// Read-only API responses the offline view needs: an explicit allow-list, NOT
+// every GET (financial data must not pile up in Cache Storage unbounded).
+const OFFLINE_API_PREFIXES = [
+  '/api/safe-to-spend',
+  '/api/month/',
+  '/api/cards',
+  '/api/cash-accounts',
+  '/api/upcoming',
+  '/api/insights/',
+];
+
+const offlineApi = (path) =>
+  OFFLINE_API_PREFIXES.some((p) => path === p || path.startsWith(p));
+
 self.addEventListener('fetch', (event) => {
   const req = event.request;
   if (req.method !== 'GET') return;
@@ -69,13 +83,17 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Read-only API calls: network-first with cached fallback for offline viewing.
+  // Read-only API calls: network-first with a cached fallback for the
+  // allow-listed offline endpoints only. A 401 wipes the data cache (new
+  // session must not see the previous one's numbers).
   if (url.pathname.startsWith('/api/')) {
-    if (url.pathname === '/api/export') return;
+    if (url.pathname === '/api/export' || !offlineApi(url.pathname)) return;
     event.respondWith(
       fetch(req)
         .then((res) => {
-          if (res.ok) {
+          if (res.status === 401) {
+            caches.delete(DATA_CACHE);
+          } else if (res.ok) {
             const copy = res.clone();
             caches.open(DATA_CACHE).then((cache) => cache.put(req, copy));
           }

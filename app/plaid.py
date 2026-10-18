@@ -156,6 +156,10 @@ class PlaidClient:
             body["cursor"] = cursor
         return self._post("/transactions/sync", body)
 
+    def item_remove(self, access_token: str) -> dict:
+        """Revoke the Item at Plaid (invalidates the access token)."""
+        return self._post("/item/remove", self._auth() | {"access_token": access_token})
+
     def encrypt_token(self, token: str) -> str:
         return encrypt_token(self.config.token_key, token)
 

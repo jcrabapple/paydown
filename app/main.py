@@ -1056,6 +1056,26 @@ def create_app(db_path: str, user: str = "paydown", password: str = "", plaid=No
         db.update_row(conn, "plaid_accounts", account_id, {"ignored": 1 if body.ignored else 0})
         return _account_out(db.get_row(conn, "plaid_accounts", account_id))
 
+    @app.delete("/api/plaid/items/{item_id}", status_code=204, dependencies=[Depends(_require_plaid)])
+    def plaid_delete_item(item_id: int):
+        """Revoke a bank connection: calls Plaid /item/remove (invalidating the
+        access token) and deletes the item, its accounts and their synced
+        transactions locally (FK cascades)."""
+        _require_plaid()
+        it = db.get_row(conn, "plaid_items", item_id)
+        if not it:
+            raise HTTPException(404, "item not found")
+        token = plaid.decrypt_token(it["access_token_enc"])
+        try:
+            plaid.item_remove(token)
+        except plaidlib.PlaidError as e:
+            # A token the bank/Plaid already invalidated must not block cleanup.
+            if e.error_code not in ("INVALID_ACCESS_TOKEN", "ITEM_NOT_FOUND", "INVALID_TOKEN"):
+                raise HTTPException(502, f"Plaid error: {e.error_code} {e.message}")
+        with db.tx(conn):
+            conn.execute("DELETE FROM plaid_items WHERE id = ?", (item_id,))
+        return None
+
     # --- combined accounts (frontend Today/Budget/Month) ----------------------
     @app.get("/api/accounts")
     def list_accounts():

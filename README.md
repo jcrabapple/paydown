@@ -88,6 +88,7 @@ EnvironmentFile=%h/.config/budget.env
 ExecStart=%h/projects/budget/.venv/bin/python run.py
 Restart=on-failure
 RestartSec=3
+UMask=0077
 
 [Install]
 WantedBy=default.target
@@ -102,6 +103,18 @@ The test suite mocks all external network calls and includes a safety guard in `
 ```bash
 uv run pytest -q
 ```
+
+---
+
+## Security Notes
+
+- All app routes require HTTP Basic auth (`BUDGET_USER` / `BUDGET_PASS`); `/api/health`, `sw.js`, the manifest, and icon files are the only public paths.
+- Repeated failed logins trip a global lockout (429 + `Retry-After`, exponential cooldown). Because a tunnel/proxy makes every peer look like `127.0.0.1`, the counter is global by design; a short lockout after 5 bad passwords is the intended behavior.
+- Cross-site request forgery: mutating requests carrying a foreign `Origin` (or `Sec-Fetch-Site: cross-site`) are rejected with 403. Non-browser API clients (no `Origin` header) keep working.
+- `/api/import` accepts at most 10 MB and only real column names; crafted JSON keys are dropped, not interpolated into SQL.
+- Plaid access tokens are Fernet-encrypted at rest and excluded from export. `DELETE /api/plaid/items/{id}` revokes a bank connection at Plaid and deletes its local data.
+- The process sets `umask 077`, so the SQLite DB/WAL files are created owner-only. For an existing install, run once: `chmod 600 data/budget.db*` and add `UMask=0077` to the systemd unit. Keep the env file at `chmod 600`.
+- Basic auth has no logout; closing the browser clears it. If you need real sessions or 2FA, put an identity proxy (e.g. Cloudflare Access) in front.
 
 ---
 

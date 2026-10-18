@@ -12,6 +12,8 @@ from app.plaid import PlaidClient, PlaidConfig, sync_all
 
 
 def main() -> int:
+    # Same at-rest posture as run.py: owner-only files (Opus review #6).
+    os.umask(0o077)
     config = PlaidConfig.from_env()
     if config is None:
         print("Plaid is not configured; nothing to sync", file=sys.stderr)

@@ -470,9 +470,18 @@ def export_all(conn) -> dict:
     return {t: rows(conn, f"SELECT * FROM {t} ORDER BY id") for t in TABLES}
 
 
+def _table_columns(conn, table: str) -> set[str]:
+    return {r["name"] for r in conn.execute(f"PRAGMA table_info({table})").fetchall()}
+
+
 def import_all(conn, data: dict) -> None:
     with tx(conn):
         tables = _fk_order(conn, TABLES)
+        # Security (Opus review #2): import column names must never be
+        # interpolated into SQL. Allow-list every key against PRAGMA
+        # table_info and DROP keys that are not real columns — a crafted
+        # backup file otherwise executes arbitrary INSERT ... SELECT.
+        allowed_cols = {t: _table_columns(conn, t) for t in tables}
         # Deleting pay_schedules cascades ON DELETE SET NULL onto
         # transactions.pay_schedule_id (transactions are not part of the
         # import). Capture the links and restore them after import when the
@@ -494,8 +503,13 @@ def import_all(conn, data: dict) -> None:
         for t in reversed(tables):
             conn.execute(f"DELETE FROM {t}")
         for t in tables:
+            allowed = allowed_cols[t]
             for r in data.get(t, []):
-                cols = list(r.keys())
+                if not isinstance(r, dict):
+                    continue
+                cols = [c for c in r.keys() if c in allowed]
+                if not cols:
+                    continue
                 qs = ", ".join("?" for _ in cols)
                 conn.execute(
                     f"INSERT INTO {t} ({', '.join(cols)}) VALUES ({qs})",

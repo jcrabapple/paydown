@@ -486,9 +486,20 @@ async function plaidPanel(main, cards, cashAccounts) {
         ${itemStatusPill(item)}
         <span class="when small muted">synced ${esc(relTime(item.last_synced_at))}</span>
         ${item.status === 'login_required' ? '<button class="btn small warn" data-reconnect>Reconnect</button>' : ''}
+        <button class="linklike" data-remove title="Revoke this bank connection">Remove</button>
       </div>`);
       const rbtn = row.querySelector('[data-reconnect]');
       if (rbtn) rbtn.addEventListener('click', () => openLinkFlow(`update:${item.id}`));
+      row.querySelector('[data-remove]').addEventListener('click', async () => {
+        const name = item.institution_name || 'this bank';
+        if (!(await confirmDialog(
+          `Remove ${name} from Paydown? This revokes Paydown's access at the bank and deletes its ` +
+          'synced accounts and transactions here. Cards you added from it stay, as manual entries.',
+        ))) return;
+        try { await api.del(`/api/plaid/items/${item.id}`); }
+        catch (e) { showErr(errText(e)); return; }
+        refresh();
+      });
       itemsBox.appendChild(row);
     }
   }

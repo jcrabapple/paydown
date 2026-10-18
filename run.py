@@ -12,6 +12,9 @@ from app.plaid import PlaidClient, PlaidConfig
 
 
 def main() -> None:
+    # Financial data at rest: every file this process creates (DB, WAL, logs)
+    # is owner-only, regardless of the invoking shell's umask (Opus review #6).
+    os.umask(0o077)
     db_path = os.environ.get("BUDGET_DB", "data/budget.db")
     user = os.environ.get("BUDGET_USER", "paydown")
     password = os.environ.get("BUDGET_PASS", "")
