@@ -1,0 +1,194 @@
+/* Page-specific styles for Accounts/Month/Budget/Settings/Subscriptions (FIX5 R2 lane P). */
+
+/* ---- Accounts: compact cash-account rows (P1) ---- */
+.cash-list .cash-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  padding: 0.45rem 0.2rem;
+  border-bottom: 1px solid var(--border);
+}
+.cash-list .cash-row:last-child { border-bottom: none; }
+.cash-row .cash-name { font-weight: 600; }
+.cash-row .cash-balance { margin-left: auto; font-variant-numeric: tabular-nums; }
+.cash-row .cash-meta { color: var(--muted); }
+.cash-row .cash-actions { display: flex; gap: 0.35rem; }
+
+/* Not-counted $0 accounts collapsed under a disclosure row. */
+.more-accounts { margin-top: 0.4rem; }
+.more-accounts > summary {
+  cursor: pointer;
+  color: var(--muted);
+  padding: 0.35rem 0.2rem;
+}
+.more-accounts .cash-row .cash-actions { display: none; }
+.more-accounts[open] .cash-row .cash-actions { display: flex; }
+
+/* ---- Accounts: Rename link on generic card names ---- */
+.rename-link { margin-left: 0.35rem; }
+
+/* ---- Month: four-tile strip (P2) ---- */
+.tiles .tile .t-note { display: block; font-size: 0.78rem; color: var(--muted); }
+
+/* ---- Month: "from bank" note on logged payments ---- */
+.pay-list .from-bank { color: var(--muted); font-size: 0.85rem; }
+
+/* ---- Month: Reality check panel (FIX5 R3 lane R) ---- */
+.rc-headline { font-size: 1.05rem; margin: 0.2rem 0 0.1rem; }
+.rc-headline.bad { color: var(--bad); }
+.rc-headline.good { color: var(--good); }
+.rc-interest { margin: 0 0 0.4rem; }
+.rc-rows { list-style: none; margin: 0.3rem 0 0; padding: 0; }
+.rc-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem 0.8rem;
+  flex-wrap: wrap;
+  padding: 0.45rem 0.2rem;
+  border-bottom: 1px solid var(--border);
+}
+.rc-row:last-child { border-bottom: none; }
+.rc-month { font-weight: 600; min-width: 9.5rem; }
+.rc-partial { color: var(--muted); font-weight: 400; font-size: 0.8rem; }
+.rc-net { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rc-net.good { color: var(--good); }
+.rc-net.bad { color: var(--bad); }
+.rc-break { color: var(--muted); font-size: 0.85rem; }
+@media (max-width: 699px) {
+  .rc-break { flex-basis: 100%; }
+  .rc-month { min-width: 0; }
+}
+
+/* ---- Today: debt-growth note inside the hero (FIX5 R3 lane R / UI6) ---- */
+a.growth-note {
+  display: inline-block;
+  margin: 0.45rem 0 0.25rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: var(--warn-soft);
+  color: var(--warn);
+  font-size: 0.84rem;
+  font-weight: 550;
+}
+.sts-hero .sts-breakdown {
+  text-align: left;
+  margin-top: 0.9rem;
+}
+
+/* ---- Budget: "Your actual spending" panel (FIX5 R3 lane R) ---- */
+details.spend-panel {
+  margin-bottom: 1rem;
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: var(--shadow);
+  padding: 0.85rem 1.15rem;
+}
+.spend-list { list-style: none; margin: 0.4rem 0; padding: 0; }
+.spend-list li {
+  padding: 0.45rem 0.2rem;
+  border-bottom: 1px solid var(--border);
+}
+.spend-list li:last-child { border-bottom: none; }
+.spend-list label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem 0.6rem;
+  flex-wrap: wrap;
+  cursor: pointer;
+}
+.spend-list input[type="checkbox"] { align-self: center; }
+.spend-list .name { font-weight: 600; }
+.spend-note { color: var(--muted); font-size: 0.85rem; }
+.spend-amt { margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.spend-panel [data-add-spend] { margin-top: 0.4rem; }
+
+/* ---- Budget: overview metrics strip + allocation bar legend ---- */
+.budget-overview .overview-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.9rem;
+  margin-bottom: 0.9rem;
+}
+.budget-overview .metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.budget-overview .m-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.budget-overview .m-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.budget-overview .alloc-bar { margin: 0.4rem 0 0.5rem; }
+.budget-overview .alloc-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.1rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.budget-overview .alloc-legend .swatch { margin-right: 0.3rem; }
+.budget-overview .alloc-legend .swatch.bills { background: var(--accent); }
+.budget-overview .alloc-legend .swatch.spending { background: var(--good); }
+.budget-overview .alloc-legend .swatch.subs { background: #0e7d8c; }
+.budget-overview .alloc-legend .swatch.mins { background: var(--warn); }
+.budget-overview .alloc-legend .swatch.extra { background: var(--extra); }
+
+/* ---- Budget: unified Income & Pay Schedule panel ---- */
+.panel-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 0.8rem 0;
+}
+.panel .sub-head { margin-top: 0; }
+.panel .sub-head h3 {
+  margin: 0;
+  font-size: 1rem;
+  letter-spacing: -0.02em;
+}
+.section-head .head-pills {
+  display: inline-flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+details.panel .waterfall { margin-top: 0.6rem; }
+
+/* ---- Responsive card grids (accounts/plan/overview consumers) ---- */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
+}
+@media (min-width: 720px) {
+  .cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 0.9rem;
+  }
+}
+.cards-grid .card-item {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  background: var(--surface);
+}
+
+/* ---- Plan: unified simulator control deck ---- */
+.simulator-panel .sim-section {
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.simulator-panel .sim-section:last-child { border-bottom: none; padding-bottom: 0; }
+.simulator-panel .sim-section:first-child { padding-top: 0; }
+.simulator-panel .sim-label {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
