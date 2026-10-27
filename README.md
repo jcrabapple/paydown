@@ -8,6 +8,28 @@ Paydown answers two questions that most budgeting apps muddle together:
 
 Built with **Python 3.12 (FastAPI + SQLite)** and **vanilla ES-module JavaScript + CSS** (zero build step, zero npm dependencies, installable as a PWA, light/dark mode out of the box). Works 100% manually or with optional **Plaid** bank sync.
 
+<p align="center">
+  <img src="docs/screenshots/web-today.png" alt="Today: Safe-to-Spend until the next payday, with what is reserved before payday and what is coming up" width="860">
+</p>
+
+<table>
+  <tr>
+    <td><img src="docs/screenshots/web-plan.png" alt="Plan: Avalanche / Snowball / Custom simulator, debt-free date, interest saved, balance chart"></td>
+    <td><img src="docs/screenshots/web-month.png" alt="Month: income, committed spending, extra to cards, and this month's per-card plan"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/web-budget.png" alt="Budget: income, pay schedule, bills and spending"></td>
+    <td><img src="docs/screenshots/web-accounts.png" alt="Accounts: card balances, APR, utilization and payoff dates"></td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="docs/screenshots/web-today-mobile-dark.png" alt="Today on a phone in dark mode" width="260">
+  &nbsp;&nbsp;
+  <a href="https://github.com/jcrabapple/paydown-android"><img src="https://raw.githubusercontent.com/jcrabapple/paydown-android/main/docs/screenshots/today.png" alt="The native Android app" width="260"></a>
+</p>
+<p align="center"><sub>Installable PWA (left, dark mode) and the <a href="https://github.com/jcrabapple/paydown-android">native Android app</a> (right). All screenshots use the fictional demo household from <code>scripts/seed_demo.py</code>.</sub></p>
+
 ---
 
 ## Features
@@ -51,6 +73,14 @@ BUDGET_USER=paydown BUDGET_PASS="your-strong-password" BUDGET_PORT=8485 uv run p
 ```
 
 Open `http://127.0.0.1:8485` and sign in with your `BUDGET_USER` and `BUDGET_PASS`.
+
+### Try it with demo data
+To look around without entering your own numbers, seed a fictional household (cards, bills, a pay schedule, goals and subscriptions, with dates relative to today) into a separate database:
+```bash
+uv run python scripts/seed_demo.py data/demo.db
+BUDGET_DB=data/demo.db BUDGET_PASS=demo uv run python run.py
+```
+Then sign in as `paydown` / `demo` (credentials always come from the environment, never the database). The script refuses to touch an existing file.
 
 ---
 
