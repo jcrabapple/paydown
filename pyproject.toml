@@ -1,0 +1,18 @@
+[project]
+name = "paydown"
+version = "0.1.0"
+description = "Monthly credit card payoff budget"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "cryptography>=50.0.2",
+    "fastapi>=0.115",
+    "httpx>=0.28.1",
+    "uvicorn[standard]>=0.30",
+]
+
+[dependency-groups]
+dev = ["pytest>=8", "httpx>=0.27"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

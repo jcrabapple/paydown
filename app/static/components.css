@@ -1,0 +1,102 @@
+/* Shared component styles (orchestrator-owned; UI6). */
+.toasts {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(1rem + env(safe-area-inset-bottom, 0px) + var(--tabbar-h, 0px));
+  display: flex; flex-direction: column; gap: .5rem; z-index: 1000;
+  pointer-events: none; width: min(92vw, 28rem);
+}
+.toast {
+  pointer-events: auto; padding: .75rem 1rem; border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--text); box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--good); font-size: .92rem; font-weight: 500;
+  transition: opacity .3s, transform .3s;
+}
+.toast.info { border-left-color: var(--accent); }
+.toast.out { opacity: 0; transform: translateY(6px); }
+@media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+
+.banner.dismissible { display: flex; align-items: flex-start; gap: .75rem; }
+.banner.dismissible .msg { flex: 1; }
+.banner-x {
+  background: none; border: 0; color: inherit; font-size: 1.25rem; line-height: 1;
+  min-width: 36px; min-height: 36px; cursor: pointer; margin: -.4rem -.4rem -.4rem 0;
+}
+
+/* Filter pill bar (e.g. All / Bills / Spending) */
+.filter-pills {
+  display: inline-flex;
+  gap: 0.25rem;
+  background: var(--surface-2);
+  padding: 0.2rem;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+}
+.filter-pills button {
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 0.25rem 0.65rem;
+  cursor: pointer;
+}
+.filter-pills button[aria-pressed="true"] {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* Stacked allocation bar */
+.alloc-bar {
+  display: flex;
+  height: 0.7rem;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--surface-2);
+  gap: 2px;
+  margin: 0.5rem 0 0.65rem;
+}
+.alloc-seg { height: 100%; min-width: 4px; transition: width 0.25s; }
+.alloc-seg.bills { background: var(--accent); }
+.alloc-seg.spending { background: var(--good); }
+.alloc-seg.subs { background: #0e7d8c; }
+.alloc-seg.mins { background: var(--warn); }
+.alloc-seg.extra { background: var(--extra); }
+
+/* Sub-disclosure box inside a panel */
+details.sub-disclosure {
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.85rem;
+  margin-top: 0.75rem;
+}
+details.sub-disclosure > summary {
+  cursor: pointer;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  list-style: none;
+}
+details.sub-disclosure > summary::-webkit-details-marker { display: none; }
+details.sub-disclosure > summary::after { content: "▾"; color: var(--muted); font-size: 0.8rem; }
+details.sub-disclosure:not([open]) > summary::after { transform: rotate(-90deg); }
+details.sub-disclosure[open] > summary {
+  margin-bottom: 0.6rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* Row action cluster */
+.row-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+  flex-shrink: 0;
+}
